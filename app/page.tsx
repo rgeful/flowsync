@@ -134,6 +134,13 @@ export default function Home() {
                       </div>
                     </div>
                     <button
+                      onClick={ () => alert('Edit functionality not implemented yet')}
+                      className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Edit"
+                    >
+                      <Edit className="w-5 h-5" />
+                    </button>
+                    <button
                       onClick={() =>
                         setWorkflows(workflows.filter((x) => x.id !== w.id))
                       }
@@ -142,6 +149,7 @@ export default function Home() {
                     >
                       <Trash2 className="w-5 h-5" />
                     </button>
+                    
                   </div>
                 </div>
               ))}
