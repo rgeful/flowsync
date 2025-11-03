@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { Zap, Plus, Clock, CheckCircle, Trash2, Edit } from 'lucide-react';
 
 export default function Home() {
+  const [edit, setEdit] = useState<number | null>(null);
+  const [editInput, setEditInput] = useState('');
   const [input, setInput] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [workflows, setWorkflows] = useState([
@@ -35,8 +37,21 @@ export default function Home() {
     setIsCreating(false);
   }
 
-  function handleDelete(id: number) {
-    setWorkflows(workflows.filter(w => w.id !== id));
+  function handleEdit(id: number) {
+    if (!editInput.trim()) return;
+    setWorkflows(workflows.map(w => w.id === id ? { ...w, description: editInput.trim() } : w));
+    setEdit(null);
+    setEditInput('');
+  }
+
+  function startEdit(id: number, currentDescription: string) {
+    setEdit(id);
+    setEditInput(currentDescription);
+  }
+
+  function cancelEdit() {
+    setEdit(null);
+    setEditInput('');
   }
 
   return (
@@ -113,44 +128,76 @@ export default function Home() {
                   key={w.id}
                   className="bg-white rounded-2xl shadow-sm border border-[#E5D5C0] p-6 hover:shadow-md transition-shadow"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <CheckCircle className="w-5 h-5 text-green-500" />
-                        <span className="inline-block px-2 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-md">
-                          active
-                        </span>
+                  {edit === w.id ? (
+                    // Edit mode
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Edit Workflow Description
+                        </label>
+                        <textarea
+                          value={editInput}
+                          onChange={(e) => setEditInput(e.target.value)}
+                          placeholder="Describe your automation in plain English"
+                          className="w-full h-32 px-4 py-3 bg-[#FFFBF5] border border-[#E5D5C0] rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent resize-none"
+                        />
                       </div>
-                      <p className="text-gray-900 mb-3">{w.description}</p>
-                      <div className="flex items-center gap-4 text-sm text-gray-500">
-                        <div className="flex items-center gap-1">
-                          <Clock className="w-4 h-4" />
-                          <span>{w.schedule}</span>
-                        </div>
-                        <div>
-                          Next run:{' '}
-                          <span className="font-medium text-gray-700">{w.nextRun}</span>
-                        </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEdit(w.id)}
+                          disabled={!editInput.trim()}
+                          className="flex-1 bg-linear-to-r from-amber-400 to-orange-500 text-white font-medium py-2 px-4 rounded-lg hover:from-amber-500 hover:to-orange-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={cancelEdit}
+                          className="flex-1 bg-gray-100 text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors"
+                        >
+                          Cancel
+                        </button>
                       </div>
                     </div>
-                    <button
-                      onClick={ () => alert('Edit functionality not implemented yet')}
-                      className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
-                      title="Edit"
-                    >
-                      <Edit className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={() =>
-                        setWorkflows(workflows.filter((x) => x.id !== w.id))
-                      }
-                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                      title="Delete"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                    
-                  </div>
+                  ) : (
+                    // Normal view
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <CheckCircle className="w-5 h-5 text-green-500" />
+                          <span className="inline-block px-2 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-md">
+                            active
+                          </span>
+                        </div>
+                        <p className="text-gray-900 mb-3">{w.description}</p>
+                        <div className="flex items-center gap-4 text-sm text-gray-500">
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-4 h-4" />
+                            <span>{w.schedule}</span>
+                          </div>
+                          <div>
+                            Next run:{' '}
+                            <span className="font-medium text-gray-700">{w.nextRun}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => startEdit(w.id, w.description)}
+                        className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Edit"
+                      >
+                        <Edit className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() =>
+                          setWorkflows(workflows.filter((x) => x.id !== w.id))
+                        }
+                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Delete"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
