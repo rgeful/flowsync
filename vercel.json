@@ -1,0 +1,6 @@
+{
+  "version": 2,
+  "crons": [
+    { "path": "/api/flow/run?key=__CRON_SECRET__", "schedule": "*/5 * * * *" }
+  ]
+}
