@@ -12,12 +12,13 @@ Your goal is to parse natural language user requests into precise, executable JS
 - Identify the "Integration" (GitHub, Telegram, CoinGecko, etc.).
 - Identify the "Method" (GET, POST).
 - Construct a logical payload based on the user's intent.
+- For example, "Text me Bitcoin price once a day" translates to a Telegram action with a GET method fetching CoinGecko's Bitcoin price.
 
 ### STRICT JSON OUTPUT
 You must return a JSON object matching this schema. Do not include markdown formatting.
 `;
 
-// This schema defines exactly what GPT-4o MUST return
+// Schema defines exactly what GPT-4o must return
 export const FLOW_SCHEMA_DESCRIPTION = `
 A generic workflow definition containing:
 - name: A short, catchy title for the flow (e.g., "Daily Bitcoin Check").
