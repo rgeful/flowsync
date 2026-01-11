@@ -18,7 +18,6 @@ You must return a JSON object matching this schema. Do not include markdown form
 `;
 
 // This schema defines exactly what GPT-4o MUST return
-// We pass this to the "generateObject" function in the AI SDK.
 export const FLOW_SCHEMA_DESCRIPTION = `
 A generic workflow definition containing:
 - name: A short, catchy title for the flow (e.g., "Daily Bitcoin Check").
