@@ -36,6 +36,23 @@ export function FlowCard({ flow, onUpdate }: { flow: Flow; onUpdate?: () => void
     }
   }
 
+  async function handleRunNow() {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/flow/${flow.id}/run`, { method: "POST" });
+      const data = await res.json();
+      if (data.status === "success") {
+        alert("Flow executed successfully!");
+      } else {
+        alert(`Flow failed: ${data.logs?.[data.logs.length - 1]?.error || "Unknown error"}`);
+      }
+    } catch {
+      alert("Failed to run flow");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="bg-zinc-900 rounded-lg p-4 space-y-3">
       <div className="flex items-start justify-between">
@@ -60,6 +77,13 @@ export function FlowCard({ flow, onUpdate }: { flow: Flow; onUpdate?: () => void
         </code>
 
         <div className="flex gap-2">
+          <button
+            onClick={handleRunNow}
+            disabled={loading}
+            className="text-sm text-blue-400 hover:text-blue-300 disabled:opacity-50"
+          >
+            Run Now
+          </button>
           <button
             onClick={handleToggle}
             disabled={loading}
