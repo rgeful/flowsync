@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
       try {
         // Execute the flow actions
         const actions = flow.actions as Array<{
-          integration: "telegram" | "github" | "coingecko" | "webhook";
+          integration: "telegram" | "github" | "coingecko" | "webhook" | "ai_generate";
           method: "GET" | "POST";
           endpoint: string | null;
           payload: {
@@ -72,6 +72,7 @@ export async function GET(request: NextRequest) {
             coin: string | null;
             repo: string | null;
             url: string | null;
+            prompt: string | null;
           };
         }>;
 

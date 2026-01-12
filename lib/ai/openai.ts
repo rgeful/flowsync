@@ -9,7 +9,7 @@ const openai = new OpenAI({
 
 // Schema for the parsed flow output
 const ActionSchema = z.object({
-  integration: z.enum(["telegram", "github", "coingecko", "webhook"]),
+  integration: z.enum(["telegram", "github", "coingecko", "webhook", "ai_generate"]),
   method: z.enum(["GET", "POST"]),
   endpoint: z.string().nullable(),
   payload: z.object({
@@ -18,6 +18,7 @@ const ActionSchema = z.object({
     coin: z.string().nullable(),
     repo: z.string().nullable(),
     url: z.string().nullable(),
+    prompt: z.string().nullable(),
   }),
 });
 

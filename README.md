@@ -96,7 +96,3 @@ Example prompts:
 - "Send me Bitcoin price on Telegram (chat ID: 123456) every morning at 9am"
 - "Check Ethereum price and message me on Telegram every hour"
 - "Send a daily reminder at 5pm to my Telegram"
-
-## License
-
-MIT

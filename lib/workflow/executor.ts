@@ -1,8 +1,9 @@
 import { sendTelegramMessage } from "@/lib/integrations/telegram";
 import { getCoinPrice } from "@/lib/integrations/coingecko";
+import OpenAI from "openai";
 
 type Action = {
-  integration: "telegram" | "github" | "coingecko" | "webhook";
+  integration: "telegram" | "github" | "coingecko" | "webhook" | "ai_generate";
   method: "GET" | "POST";
   endpoint: string | null;
   payload: {
@@ -11,6 +12,7 @@ type Action = {
     coin: string | null;
     repo: string | null;
     url: string | null;
+    prompt: string | null;
   };
 };
 
@@ -21,6 +23,10 @@ type ExecutionLog = {
   error?: string;
 };
 
+const openai = new OpenAI({
+  apiKey: process.env.OPEN_AI_API_KEY,
+});
+
 export async function executeActions(actions: Action[]): Promise<ExecutionLog[]> {
   const logs: ExecutionLog[] = [];
   const context: Record<string, unknown> = {};
@@ -30,6 +36,23 @@ export async function executeActions(actions: Action[]): Promise<ExecutionLog[]>
       let result: unknown;
 
       switch (action.integration) {
+        case "ai_generate": {
+          if (!action.payload.prompt) {
+            throw new Error("AI generate requires a prompt");
+          }
+          const completion = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [
+              { role: "system", content: "You are a helpful assistant that generates creative content." },
+              { role: "user", content: action.payload.prompt },
+            ],
+          });
+          const generated = completion.choices[0].message.content || "";
+          context.generatedMessage = generated;
+          result = { generated };
+          break;
+        }
+
         case "coingecko": {
           const coinData = await getCoinPrice(action.payload);
           context.coinMessage = coinData.message;
@@ -39,8 +62,11 @@ export async function executeActions(actions: Action[]): Promise<ExecutionLog[]>
         }
 
         case "telegram": {
-          // Use coin message from context if no message specified
-          const message = action.payload.message || (context.coinMessage as string);
+          // Use generated or coin message from context if no message specified
+          const message =
+            action.payload.message ||
+            (context.generatedMessage as string) ||
+            (context.coinMessage as string);
           result = await sendTelegramMessage({
             ...action.payload,
             message,

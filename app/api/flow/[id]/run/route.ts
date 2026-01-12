@@ -31,7 +31,7 @@ export async function POST(
 
     // Execute the flow actions
     const actions = flow.actions as Array<{
-      integration: "telegram" | "github" | "coingecko" | "webhook";
+      integration: "telegram" | "github" | "coingecko" | "webhook" | "ai_generate";
       method: "GET" | "POST";
       endpoint: string | null;
       payload: {
@@ -40,6 +40,7 @@ export async function POST(
         coin: string | null;
         repo: string | null;
         url: string | null;
+        prompt: string | null;
       };
     }>;
 
