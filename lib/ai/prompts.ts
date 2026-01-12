@@ -12,7 +12,15 @@ Your goal is to parse natural language user requests into precise, executable JS
 - Identify the "Integration" (GitHub, Telegram, CoinGecko, etc.).
 - Identify the "Method" (GET, POST).
 - Construct a logical payload based on the user's intent.
-- For example, "Text me Bitcoin price once a day" translates to a Telegram action with a GET method fetching CoinGecko's Bitcoin price.
+- Actions are executed in order. Data from earlier actions flows to later ones.
+- When fetching data (e.g., CoinGecko price) and sending it somewhere (e.g., Telegram):
+  1. Put the data-fetching action FIRST (e.g., coingecko)
+  2. Put the messaging action SECOND (e.g., telegram)
+  3. Set the telegram message to NULL - the system will automatically use the data from the previous action
+- Example: "Send me Bitcoin price on Telegram" becomes:
+  - Action 1: { integration: "coingecko", payload: { coin: "bitcoin", message: null, chatId: null, ... } }
+  - Action 2: { integration: "telegram", payload: { chatId: "USER_CHAT_ID", message: null, ... } }
+- IMPORTANT: Never use placeholders like {{price}} or templates. Set message to null when data comes from a previous action.
 
 ### STRICT JSON OUTPUT
 You must return a JSON object matching this schema. Do not include markdown formatting.
