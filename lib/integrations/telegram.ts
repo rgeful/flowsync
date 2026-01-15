@@ -11,7 +11,11 @@ export async function sendTelegramMessage(payload: TelegramPayload) {
     throw new Error("TELEGRAM_BOT_TOKEN not configured");
   }
 
-  if (!payload.chatId || !payload.message) {
+  const chatId = payload.chatId && payload.chatId !== "USER_CHAT_ID"
+    ? payload.chatId
+    : process.env.TELEGRAM_CHAT_ID;
+
+  if (!chatId || !payload.message) {
     throw new Error("Missing chatId or message in payload");
   }
 
@@ -19,7 +23,7 @@ export async function sendTelegramMessage(payload: TelegramPayload) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      chat_id: payload.chatId,
+      chat_id: chatId,
       text: payload.message,
       parse_mode: "HTML",
     }),
