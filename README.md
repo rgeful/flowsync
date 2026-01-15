@@ -2,6 +2,8 @@
 
 A natural-language automation builder that converts English text into scheduled workflows.
 
+https://github.com/user-attachments/assets/aaa9e7f1-cbbb-4aee-891e-d525997e07bb
+
 ## How It Works
 
 1. **Describe your automation** in plain English (e.g., "Send me Bitcoin price on Telegram every morning at 9am")
